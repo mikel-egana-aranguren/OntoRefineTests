@@ -1,0 +1,22 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX qb: <http://purl.org/linked-data/cube#>
+PREFIX spif: <http://spinrdf.org/spif#>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+
+CONSTRUCT {
+	?uriObservacion a qb:Observation ;
+    	dct:date ?Date .
+}
+
+WHERE{
+  SERVICE<http://ckan.eurohelp.es:7200/rdf-bridge/1678315150349>{
+    ?avGasteizRow a <urn:Row> ;
+    	<urn:col:Date> ?Date ;
+    	<urn:col:ICAEstacion1> ?ICAEstacion1 ;
+    	<urn:col:ICAEstacion2> ?ICAEstacion2 .
+  }
+  bind(spif:parseDate(?Date,"dd/MM/yyyy") as ?fechaParseada)
+  bind(iri(concat("http://opendata.euskadi.eus/observacion/AV-GASTEIZ/",spif:encodeURL(?fechaParseada),"/calidad-aire")) as ?uriObservacion) 	
+}
